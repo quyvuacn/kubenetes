@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    spec:
+      containers:
+      - name: spring-app
+        volumeMounts:
+        - name: app-config
+          mountPath: /app/config
+        - name: tls-cert
+          mountPath: /app/tls
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      imagePullSecrets:
+      - name: docker-registry
+      volumes:
+      - name: app-config
+        configMap:
+          name: app-config
+      - name: tls-cert
+        secret:
+          secretName: tls-cert
